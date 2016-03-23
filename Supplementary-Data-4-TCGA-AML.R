@@ -270,7 +270,7 @@ title(main = "# Genes", font.main = ifelse(grepl("[[:lower:]]", colnames(chromTa
 library(CoxHD)
 tcgaData <- data.frame(tcgaMutation, tcgaClinical[14:24])
 tcgaData <- tcgaData[colSums(tcgaData, na.rm=TRUE)>=5]
-tcgaData <- ImputeXMissing(data.frame(tcgaData, Gender=tcgaClinical$Gender, scale(tcgaClinical[,c(7:12)])))
+tcgaData <- ImputeMissing(data.frame(tcgaData, Gender=tcgaClinical$Gender, scale(tcgaClinical[,c(7:12)])))
 rownames(tcgaData) <- rownames(tcgaMutation)
 tcgaData <- tcgaData[rowSums(is.na(tcgaData))==0 & rownames(tcgaData) %in% colnames(tcgaExpr),]
 dataFrame <- data.frame(tcgaData, scale(tcgaPca$x[rownames(tcgaData),1:20]))
