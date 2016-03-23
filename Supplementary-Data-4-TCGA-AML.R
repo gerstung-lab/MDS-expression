@@ -57,10 +57,15 @@ plot(density(tcgaExpr[,1]))
 for(j in 1:ncol(tcgaExpr)) lines(density(tcgaExpr[,j]))
 
 #' #### Load curated clinical and mutation data
-tcgaClinical <- read.table("../../../Git/AML/data/TCGA_clin.txt", sep="\t", header=TRUE)
+library(xlsx)
+tmp <- tempfile()
+download.file("http://www.nature.com/ncomms/2015/150109/ncomms6901/extref/ncomms6901-s6.xlsx", tmp)
+numericalize <- function(x){if(class(x)!='factor') return(x) else if(all(is.na(as.numeric(levels(x))))) return(x) else return(as.numeric(as.character(x)))}
+tcgaClinical <- as.data.frame(sapply(read.xlsx(tmp, sheetName="Clinical", startRow=3), numericalize, simplify=FALSE))
 colnames(tcgaClinical)[3:12] <- capitalize(colnames(tcgaClinical)[3:12])
-rownames(tcgaClinical) <- as.character(tcgaClinical$TCGA_ID)
-tcgaGenetic <- read.table("../../../Git/AML/data/TCGA_gen.txt", sep="\t", header=TRUE)
+rownames(tcgaClinical) <- as.character(tcgaClinical$TCGA_ID), numericalize, simplify=FALSE))
+colnames(tcgaClinical)[3:12] <- capitalize(colnames(tcgaClinical)[3:12])
+tcgaGenetic <- as.data.frame(sapply(read.xlsx(tmp, sheetName="Genetic", startRow=3)
 tcgaGenetic$TCGA_ID <- factor(as.character(tcgaGenetic$TCGA_ID), levels = levels(tcgaClinical$TCGA_ID))
 g <- as.character(tcgaGenetic$Hugo_Symbol)
 g[tcgaGenetic$Hugo_Symbol=="FLT3" & tcgaGenetic$Variant_Type == 'INS'] <- "FLT3_ITD"

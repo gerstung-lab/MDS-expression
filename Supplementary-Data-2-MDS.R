@@ -62,8 +62,11 @@ rm(tab,e)
 
 #' ### 2. Load mutation and clinical data
 #' Load clinical data for 159 MDS patients and 17 normals from Supplementary Table S1.
-mdsData <- read.table("suppData/SuppTableS1GEO.txt", sep="\t", header=TRUE, check.names=FALSE) ## A tab-delimited version of Supplementary Table S1
-head(mdsData)
+library(xlsx)
+tmp <- tempfile()
+download.file("http://www.nature.com/ncomms/2015/150109//ncomms6901/extref/ncomms6901-s2.xlsx", tmp) # Supp Table 2 from the paper
+numericalize <- function(x){if(class(x)!='factor') return(x) else if(all(is.na(as.numeric(levels(x))))) return(x) else return(as.numeric(as.character(x)))} # Convert factors to numeric 
+mdsData <- as.data.frame(sapply(read.xlsx(tmp, sheetIndex=1, startRow=2, check.names=FALSE), numericalize, simplify=FALSE))
 ix <- setdiff(na.omit(match(samples, mdsData$GEOID)), which(is.na(mdsData$PDID))) ## All MDS samples with expression and seq data
 normalSamples <- as.character(mdsData$GEOID[mdsData$Type=="Normal"])
 
